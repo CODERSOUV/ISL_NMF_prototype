@@ -46,6 +46,7 @@ class SignLanguageRecognizer:
         return ""
 
     def process_frame(self, frame):
+        
         landmarks = self.extract_landmarks(frame)
         gesture = self.recognize_gesture()
         self.sequence.append(landmarks)
@@ -144,8 +145,10 @@ def styles():
 def gesture_labels():
     return jsonify(recognizer.gesture_labels)
 
+@app.route('/process_frame/', methods=['POST'])
 @app.route('/process_frame', methods=['POST'])
 def process_frame():
+    print(request)
     if 'frame' not in request.files:
         return jsonify({'error': 'No frame part'}), 400
     
