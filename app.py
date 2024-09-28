@@ -16,7 +16,12 @@ class SignLanguageRecognizer:
 
         self.model = load_model('sign_language_model.h5')
         self.max_length = 90
-        self.gesture_labels = ['Beautiful', 'Blind','Deaf','Happy','Loud']
+        self.gesture_labels = ['Alive', 'Bad', 'Beautiful', 'Big large', 'Blind', 'Cheap', 'Clean', 'Cold', 'Cool', 'Curved', 
+                               'Dead', 'Deaf', 'Deep', 'Dirty', 'Dry', 'Expensive', 'Famous', 'Fast', 'Female', 'Flat', 'Good', 
+                               'Happy', 'Hard', 'Healthy', 'Heavy', 'High', 'Hot', 'Light', 'Long', 'Loose', 'Loud', 'Low', 
+                               'Male', 'Mean', 'Narrow', 'New', 'Nice', 'Old', 'Poor', 'Quiet', 'Rich', 'Sad', 'Shallow', 
+                               'Short', 'Sick', 'Slow', 'Small little', 'Soft', 'Strong', 'Tall', 'Thick', 'Thin', 'Tight', 
+                               'Ugly', 'Warm', 'Weak', 'Wet', 'Wide', 'Young']
         
         self.sequence = deque(maxlen=self.max_length)
         self.predictions = []
