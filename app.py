@@ -1,12 +1,9 @@
 from flask import Flask, render_template, Response, jsonify, make_response, request
 import cv2
 import numpy as np
-import tensorflow as tf
+import pickle  # Import pickle to load the .pkl file
 from collections import deque
-from tensorflow.keras.models import load_model
 import mediapipe as mp
-import io
-import tensorflow as tf
 
 # Custom class for gesture recognition
 class SignLanguageRecognizer:
@@ -15,7 +12,10 @@ class SignLanguageRecognizer:
         self.mp_drawing = mp.solutions.drawing_utils
         self.holistic = self.mp_holistic.Holistic(min_detection_confidence=0.5, min_tracking_confidence=0.5)
 
-        self.model = load_model('sign_language_model.h5')
+        # Load the LSTM model from the .pkl file
+        with open('model.pkl', 'rb') as file:
+            self.model = pickle.load(file)
+
         self.max_length = 90
         self.gesture_labels = ['Alive', 'Bad', 'Beautiful', 'Big large', 'Blind', 'Cheap', 'Clean', 'Cold', 'Cool', 'Curved', 
                                'Dead', 'Deaf', 'Deep', 'Dirty', 'Dry', 'Expensive', 'Famous', 'Fast', 'Female', 'Flat', 'Good', 
@@ -40,7 +40,7 @@ class SignLanguageRecognizer:
     def recognize_gesture(self):
         if len(self.sequence) == self.max_length:
             padded_sequence = np.array(self.sequence)
-            res = self.model.predict(np.expand_dims(padded_sequence, axis=0))[0]
+            res = self.model.predict(np.expand_dims(padded_sequence, axis=0))[0]  # Make sure the model can handle input this way
             self.predictions.append(np.argmax(res))
 
             if len(self.predictions) > 5:
@@ -52,7 +52,6 @@ class SignLanguageRecognizer:
         return ""
 
     def process_frame(self, frame):
-        
         landmarks = self.extract_landmarks(frame)
         gesture = self.recognize_gesture()
         self.sequence.append(landmarks)
@@ -155,7 +154,6 @@ def gesture_labels():
 @app.route('/process_frame/', methods=['POST'])
 @app.route('/process_frame', methods=['POST'])
 def process_frame():
-    print(request)
     if 'frame' not in request.files:
         return jsonify({'error': 'No frame part'}), 400
     
@@ -175,4 +173,4 @@ def process_frame():
 
 # Run the application
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(host='0.0.0.0', port=5000, debug=True)
