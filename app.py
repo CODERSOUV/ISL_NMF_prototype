@@ -160,7 +160,7 @@ def process_frame():
     
     # Process the frame
     gesture = recognizer.process_frame(frame)
-    
+
     return jsonify({'gesture': gesture})
 
 # Run the application
